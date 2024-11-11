@@ -7,15 +7,15 @@ assignees: ''
 
 ---
 
-**Describe the bug**
+### Describe the bug
 A clear and concise description of what the bug is:
  - Full output of the error 
  - Steps to reproduce the behavior
 
-**Version Information**
+### Version Information
  - OS
  - Fuzzer Version (commit)
  - Python Version
 
-**Additional context**
+### Additional context
 Add any other context about the problem here.
