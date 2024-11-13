@@ -1,0 +1,23 @@
+compilers:
+  - name: opt_codesize
+    queue: opt_codesize
+    exec_params:
+      optimization: codesize
+  - name: opt_gas
+    queue: opt_gas
+    exec_params:
+      optimization: gas
+queues:
+  opt_codesize:
+    host: queue_opt_codesize
+    port: 5672
+  opt_gas:
+    host: queue_opt_gas
+    port: 5672
+db:
+  host: mongodb
+  port: 27017
+input_strategies: [ 1 ]
+# for logging level reference https://docs.python.org/3/library/logging.html#logging-levels
+verbosity: DEBUG
+extra_flags: [ ]

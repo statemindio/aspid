@@ -1,0 +1,110 @@
+version: '3'
+services:
+  generator:
+    image: registry.statemind.io/vyper-fuzzer-generator:v0.1.6
+    command:
+      - python3.10
+      - fuzz/generators/run_adder.py
+      - /corpus
+    networks:
+      - db
+      - queue_opt_gas
+      - queue_opt_codesize
+    environment:
+      PYTHONPATH: /app
+    depends_on:
+      - mongodb
+      - queue_opt_codesize
+      - queue_opt_gas
+    volumes:
+      - corpus:/corpus
+      - ./docker/config.yml:/app/config.yml
+
+  # compiler 0
+  queue_opt_codesize:
+    image: rabbitmq:management
+    networks:
+      - queue_opt_codesize
+    ports:
+      - "15672:15672"
+  runner_opt_codesize:
+    deploy:
+      replicas: 3
+    restart: always
+    image: registry.statemind.io/vyper-fuzzer-generator:v0.1.6
+    environment:
+      PYTHONPATH: /app
+      SERVICE_NAME: opt_codesize
+    depends_on:
+      - mongodb
+      - queue_opt_codesize
+    command:
+      - python3.10
+      - fuzz/runners/runner_opt.py
+    networks:
+      - db
+      - queue_opt_codesize
+    volumes:
+      - ./docker/config.yml:/app/config.yml
+
+  # compiler 1
+  queue_opt_gas:
+    image: rabbitmq:management
+    networks:
+      - queue_opt_gas
+    ports:
+      - "15673:15672"
+  runner_opt_gas:
+    deploy:
+      replicas: 3
+    restart: always
+    image: registry.statemind.io/vyper-fuzzer-generator:v0.1.6
+    environment:
+      PYTHONPATH: /app
+      SERVICE_NAME: opt_gas
+    depends_on:
+      - mongodb
+      - queue_opt_gas
+    command:
+      - python3.10
+      - fuzz/runners/runner_opt.py
+    networks:
+      - db
+      - queue_opt_gas
+    volumes:
+      - ./docker/config.yml:/app/config.yml
+  verifier:
+    image: registry.statemind.io/vyper-fuzzer-generator:v0.1.6
+    environment:
+      PYTHONPATH: /app
+    depends_on:
+      - mongodb
+    command:
+      - python3.10
+      - fuzz/verifiers/simple_verifier.py
+    networks:
+      - db
+    volumes:
+      - ./docker/config.yml:/app/config.yml
+
+  mongodb:
+    image: mongo
+    networks:
+      - db
+    ports:
+      - "27017:27017"
+    volumes:
+      - db:/data/db
+
+networks:
+  db:
+    driver: bridge
+  queue_opt_gas:
+    driver: bridge
+  queue_opt_codesize:
+    driver: bridge
+
+volumes:
+  db:
+  corpus:
+  # TODO: come up with queues' volumes to not lose it in case of a failure
