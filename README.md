@@ -19,3 +19,13 @@ This repository provides a comprehensive fuzzing framework designed to test the 
 ## Debug start-up
 
 To set up the project for test running and debugging follow the guide [here](./howto_run.md).
+
+## Documentation
+The project consists of a few parts described below:
+
+* [`fuzz`](/fuzz/README.md)
+  * [`converters`](fuzz/converters/README.md)
+  * [`generators`](fuzz/generators/README.md)
+  * [`helpers`](fuzz/helpers/README.md)
+  * [`runners`](fuzz/runners/README.md)
+  * [`verifiers`](fuzz/verifiers/README.md)
